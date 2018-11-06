@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/.netCore/v15/.suo
+/.vs
+/SMEAppHouse.Core.GHClientLib/.vs/SMEQA.GHClientLib
+/SMEAppHouse.Core.Patterns.EF/.vs/SMEAppHouse.Core.Patterns.EF
+/SMEAppHouse.Core.WebAPIPatterns/.vs/SMEAppHouse.Core.WebAPI.Patterns
+/GPSLibs.netStd_nuget_api_key.txt
+/nu_dep.bat

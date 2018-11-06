@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Description>Patterns library for implementing web Api.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="APIHostPattern\~old\**" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="APIHostPattern\~old\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="APIHostPattern\~old\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="APIHostPattern\WebAPIServiceHostBase.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SMEAppHouse.Core.Patterns.EF\SMEAppHouse.Core.Patterns.EF.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.Patterns.Repo\SMEAppHouse.Core.Patterns.Repo.csproj" />
+  </ItemGroup>
+
+</Project>

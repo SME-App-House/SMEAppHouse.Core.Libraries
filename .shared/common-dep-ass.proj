@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <Authors>James Mangubat</Authors>
+    <Company>SME App House</Company>
+    <Copyright>Copyright © SME App House 2018</Copyright>
+    <Product>Application Components (.Net Core Projects)</Product>
+    <ProductName>SME App House Component Libraries</ProductName>
+    <PackageLicenseUrl>http://www.smeapphouse.ph</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.smeapphouse.ph</PackageProjectUrl>
+    <PackageIconUrl>http://www.smeapphouse.ph/favicon.ico</PackageIconUrl>
+    <RepositoryUrl>http://www.smeapphouse.ph</RepositoryUrl>
+    <RepositoryType>repositoryType</RepositoryType>
+    <PackageReleaseNotes>release notes</PackageReleaseNotes>
+    <PackageTags>.Net Core</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
+    <Version>1.3.18073.3</Version>
+    <AssemblyVersion>1.3.18073.3</AssemblyVersion>
+    <FileVersion>1.3.18073.3</FileVersion>
+  </PropertyGroup>
+
+</Project>

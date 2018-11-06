@@ -1,0 +1,1 @@
+# SMEAppHouse.Core.Patterns.WebApi

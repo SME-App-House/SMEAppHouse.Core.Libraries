@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Patterns library for implementing entity structural and adapter pattern.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="StrategyForDBCtxt\**" />
+    <EmbeddedResource Remove="StrategyForDBCtxt\**" />
+    <None Remove="StrategyForDBCtxt\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="StrategyForModelCfg\DbEntityCfg.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="StrategyForDBCtxt\DbContextExt.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Data.SqlClient">
+      <HintPath>C:\Users\jcman\.nuget\packages\system.data.sqlclient\4.4.0\ref\netstandard2.0\System.Data.SqlClient.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
