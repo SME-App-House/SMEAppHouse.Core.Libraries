@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.RestSharpC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.TopshelfAdapter.Common", "SMEAppHouse.Core.TopshelfAdapter.Common\SMEAppHouse.Core.TopshelfAdapter.Common.csproj", "{EA367FCC-C576-4811-A075-D375AEB5DED2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.TopshelfAdapter.Scheduler", "SMEAppHouse.Core.TopshelfAdapter.Scheduler\SMEAppHouse.Core.TopshelfAdapter.Scheduler.csproj", "{22652F21-713C-400F-A705-F357EF825B43}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.TopshelfAdapter.Aggregation", "SMEAppHouse.Core.TopshelfAdapter.Aggregation\SMEAppHouse.Core.TopshelfAdapter.Aggregation.csproj", "{B297E679-2CB3-4ABE-BCFE-0E523D0DF9D6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.TopshelfAdapter", "SMEAppHouse.Core.TopshelfAdapter\SMEAppHouse.Core.TopshelfAdapter.csproj", "{5ED857ED-FB66-4B5B-AB5B-339F034FE57C}"
@@ -39,6 +37,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.Scheduler", "SMEAppHouse.Core.Scheduler\SMEAppHouse.Core.Scheduler.csproj", "{32C400F7-DA17-4264-A3A7-E00FDEC2D71F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.ProcessService", "SMEAppHouse.Core.ProcessService\SMEAppHouse.Core.ProcessService.csproj", "{3EE6AB6A-9A05-4690-AE7B-82BD1603C86F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMEAppHouse.Core.TopshelfAdapter.Scheduler", "SMEAppHouse.Core.TopshelfAdapter.Scheduler\SMEAppHouse.Core.TopshelfAdapter.Scheduler.csproj", "{C7A4DA09-3B86-440D-A5ED-04AFBC937492}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,10 +90,6 @@ Global
 		{EA367FCC-C576-4811-A075-D375AEB5DED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA367FCC-C576-4811-A075-D375AEB5DED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA367FCC-C576-4811-A075-D375AEB5DED2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22652F21-713C-400F-A705-F357EF825B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22652F21-713C-400F-A705-F357EF825B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22652F21-713C-400F-A705-F357EF825B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22652F21-713C-400F-A705-F357EF825B43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B297E679-2CB3-4ABE-BCFE-0E523D0DF9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B297E679-2CB3-4ABE-BCFE-0E523D0DF9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B297E679-2CB3-4ABE-BCFE-0E523D0DF9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -110,6 +106,10 @@ Global
 		{3EE6AB6A-9A05-4690-AE7B-82BD1603C86F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EE6AB6A-9A05-4690-AE7B-82BD1603C86F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EE6AB6A-9A05-4690-AE7B-82BD1603C86F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7A4DA09-3B86-440D-A5ED-04AFBC937492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A4DA09-3B86-440D-A5ED-04AFBC937492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A4DA09-3B86-440D-A5ED-04AFBC937492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A4DA09-3B86-440D-A5ED-04AFBC937492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
