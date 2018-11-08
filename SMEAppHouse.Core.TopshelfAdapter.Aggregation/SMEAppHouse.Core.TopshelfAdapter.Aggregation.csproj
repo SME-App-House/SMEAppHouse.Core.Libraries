@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Library for handling collection of Topshelf implemented windows service.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NodaTime" Version="2.4.2" />
+    <PackageReference Include="Topshelf" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SMEAppHouse.Core.CodeKits\SMEAppHouse.Core.CodeKits.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.TopshelfAdapter.Common\SMEAppHouse.Core.TopshelfAdapter.Common.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.TopshelfAdapter\SMEAppHouse.Core.TopshelfAdapter.csproj" />
+  </ItemGroup>
+
+</Project>

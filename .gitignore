@@ -30,3 +30,16 @@
 /SMEAppHouse.Core.RestSharpClientLib/bin/Debug
 /SMEAppHouse.Core.Reflections/obj
 /SMEAppHouse.Core.Reflections/bin/Debug
+/GPS.Frameworks.TopshelfAdapter.Aggregation/obj/Debug
+/SMEAppHouse.Core.ProcessService/bin/Debug
+/SMEAppHouse.Core.ProcessService/obj
+/SMEAppHouse.Core.Scheduler/bin/Debug
+/SMEAppHouse.Core.Scheduler/obj
+/SMEAppHouse.Core.TopshelfAdapter/bin/Debug
+/SMEAppHouse.Core.TopshelfAdapter/obj
+/SMEAppHouse.Core.TopshelfAdapter.Aggregation/bin/Debug
+/SMEAppHouse.Core.TopshelfAdapter.Aggregation/obj
+/SMEAppHouse.Core.TopshelfAdapter.Common/bin/Debug
+/SMEAppHouse.Core.TopshelfAdapter.Common/obj
+/SMEAppHouse.Core.TopshelfAdapter.Scheduler/bin/Debug
+/SMEAppHouse.Core.TopshelfAdapter.Scheduler/obj
