@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="StrategyForDBCtxt\DbContextExt.cs" />
+    <Compile Include="StrategyForDBCtxt\AppDbContextExtended.cs" />
   </ItemGroup>
 
   <ItemGroup>
