@@ -46,3 +46,5 @@
 /packages
 /SMEAppHouse.Core.SeleniumExt/bin/Debug
 /SMEAppHouse.Core.SeleniumExt/obj
+/SMEAppHouse.Core.HtmlUtil/bin/Debug
+/SMEAppHouse.Core.HtmlUtil/obj
