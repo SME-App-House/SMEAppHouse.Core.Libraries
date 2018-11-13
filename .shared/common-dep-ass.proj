@@ -18,9 +18,9 @@
     <PackageTags>.Net Core</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     
-    <Version>1.4.1811.9</Version>
-    <AssemblyVersion>1.4.1811.9</AssemblyVersion>
-    <FileVersion>1.4.1811.9</FileVersion>
+    <Version>1.4.1811.13</Version>
+    <AssemblyVersion>1.4.1811.13</AssemblyVersion>
+    <FileVersion>1.4.1811.13</FileVersion>
   </PropertyGroup>
 
 </Project>
