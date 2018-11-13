@@ -43,3 +43,6 @@
 /SMEAppHouse.Core.TopshelfAdapter.Common/obj
 /SMEAppHouse.Core.TopshelfAdapter.Scheduler/bin/Debug
 /SMEAppHouse.Core.TopshelfAdapter.Scheduler/obj
+/packages
+/SMEAppHouse.Core.SeleniumExt/bin/Debug
+/SMEAppHouse.Core.SeleniumExt/obj
