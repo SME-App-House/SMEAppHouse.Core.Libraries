@@ -11,10 +11,11 @@ namespace SMEAppHouse.Core.ProcessService.Specials
 
         public int NumberOfWorkers { get; protected set; }
 
+        // ReSharper disable once InconsistentNaming
         public Queue<TaskSlug> FIFOTargets
         {
-            get { return _fifoTargets; }
-            set { _fifoTargets = value; }
+            get => _fifoTargets;
+            set => _fifoTargets = value;
         }
 
         public TaskMultiplexer(int numOfWorkers = 1)
@@ -38,7 +39,6 @@ namespace SMEAppHouse.Core.ProcessService.Specials
                 //if(EnactOnTarget())
                 _numOfWorkersFree--;
             });
-
         }
 
         public class TaskSlug

@@ -6,7 +6,7 @@
 
     <Authors>James Mangubat</Authors>
     <Company>SME App House</Company>
-    <Copyright>Copyright © SME App House 2018</Copyright>
+    <Copyright>Copyright © SME App House 2019</Copyright>
     <Product>Application Components (.Net Core Projects)</Product>
     <ProductName>SME App House Component Libraries</ProductName>
     <PackageLicenseUrl>https://www.smeapphouse.ph</PackageLicenseUrl>
@@ -15,12 +15,12 @@
     <RepositoryUrl>https://www.smeapphouse.ph</RepositoryUrl>
     <RepositoryType>repositoryType</RepositoryType>
     <PackageReleaseNotes>release notes</PackageReleaseNotes>
-    <PackageTags>.Net Core</PackageTags>
+    <PackageTags>.Net Core, SMEAppHouse</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    
-    <Version>1.4.1811.13</Version>
-    <AssemblyVersion>1.4.1811.13</AssemblyVersion>
-    <FileVersion>1.4.1811.13</FileVersion>
+
+    <Version>1.4.1906.14</Version>
+    <AssemblyVersion>1.4.1906.14</AssemblyVersion>
+    <FileVersion>1.4.1906.14</FileVersion>
   </PropertyGroup>
 
 </Project>

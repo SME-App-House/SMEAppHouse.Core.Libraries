@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SMEAppHouse.Core.Patterns.EF.ModelComposite;
 
@@ -60,7 +61,7 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
         /// <param name="fieldSelector"></param>
         /// <returns></returns>
         internal static string GetFieldNameFromSelector<TEntity>(Expression<Func<TEntity, object>> fieldSelector)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
             if (fieldSelector.Body is MemberExpression expression)
                 return expression.Member.Name;
@@ -78,7 +79,7 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
         /// <param name="conventionFieldsToIgnore"></param>
         /// <returns></returns>
         internal static IList<string> ToListOfFields<TEntity>(this Expression<Func<TEntity, object>>[] conventionFieldsToIgnore)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
             var includes = new List<string>();
             if (conventionFieldsToIgnore == null || !conventionFieldsToIgnore.Any()) return includes;
@@ -88,14 +89,14 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
 
         internal static void IgnoreConventionFields<TEntity>(this ModelBuilder modelBuilder,
             Expression<Func<TEntity, object>>[] conventionFieldsToIgnore)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
             var includes = conventionFieldsToIgnore.ToListOfFields<TEntity>();
             IgnoreConventionFields<TEntity>(modelBuilder, includes);
         }
 
         internal static void IgnoreConventionFields<TEntity>(this ModelBuilder modelBuilder, IList<string> ignoreLIst)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
 
             /*
@@ -162,20 +163,23 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
         #region IEntity Config Extensions
 
         public static EntityTypeBuilder<T> DefineDbField<T>(this EntityTypeBuilder<T> builder,
-            Expression<Func<T, object>> fieldSelector, bool isRequired, string propertyType) where T : class, IIdentifiableEntity<int>
+            Expression<Func<T, object>> fieldSelector, bool isRequired, string propertyType) 
+            where T : class, IEntityBase //IGenericEntityBase<int>
         {
             return builder.DefineDbField(fieldSelector, isRequired, 0, "", propertyType, out var pB);
         }
 
         public static EntityTypeBuilder<T> DefineDbField<T>(this EntityTypeBuilder<T> builder,
-            Expression<Func<T, object>> fieldSelector) where T : class, IIdentifiableEntity<int>
+            Expression<Func<T, object>> fieldSelector) 
+            where T : class, IEntityBase//IGenericEntityBase<int>
         {
             return builder.DefineDbField(fieldSelector, false, 0, "", "", out var pB);
         }
 
         public static EntityTypeBuilder<T> DefineDbField<T>(this EntityTypeBuilder<T> builder,
             Expression<Func<T, object>> fieldSelector,
-            bool isRequired) where T : class, IIdentifiableEntity<int>
+            bool isRequired) 
+            where T : class, IEntityBase
         {
             return builder.DefineDbField(fieldSelector, isRequired, 0, "", "", out var pB);
         }
@@ -183,7 +187,8 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
         public static EntityTypeBuilder<T> DefineDbField<T>(this EntityTypeBuilder<T> builder,
             Expression<Func<T, object>> fieldSelector,
             bool isRequired,
-            int maxLength) where T : class, IIdentifiableEntity<int>
+            int maxLength) 
+            where T : class, IEntityBase
         {
             return builder.DefineDbField(fieldSelector, isRequired, maxLength, "", "", out var pB);
         }
@@ -194,7 +199,8 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
                                                                 int maxLength,
                                                                 string fieldName,
                                                                 string propertyType,
-                                                                out PropertyBuilder<object> propBldr) where T : class, IIdentifiableEntity<int>
+                                                                out PropertyBuilder<object> propBldr)
+            where T : class, IEntityBase // IGenericEntityBase<int>
         {
             var pB = builder.Property(fieldSelector);
             var memberName = GetFieldNameFromSelector(fieldSelector);
@@ -216,6 +222,58 @@ namespace SMEAppHouse.Core.Patterns.EF.Helpers
 
         #endregion
 
+        /// <summary>
+        /// FILTER BY PRIMARY KEYS
+        /// https://stackoverflow.com/a/42244905
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <returns></returns>
+        public static IReadOnlyList<IProperty> GetPrimaryKeyProperties<T>(this DbContext dbContext)
+        {
+            return dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties;
+        }
+        public static Expression<Func<T, bool>> FilterByPrimaryKeyPredicate<T>(this DbContext dbContext, object[] id)
+        {
+            var keyProperties = dbContext.GetPrimaryKeyProperties<T>();
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var body = keyProperties
+                // e => e.PK[i] == id[i]
+                .Select((p, i) => Expression.Equal(
+                    Expression.Property(parameter, p.Name),
+                    Expression.Convert(
+                        Expression.PropertyOrField(Expression.Constant(new { id = id[i] }), "id"),
+                        p.ClrType)))
+                .Aggregate(Expression.AndAlso);
+            return Expression.Lambda<Func<T, bool>>(body, parameter);
+        }
+        public static IQueryable<TEntity> FilterByPrimaryKey<TEntity>(this DbSet<TEntity> dbSet, DbContext context, object[] id)
+            where TEntity : class
+        {
+            return dbSet.Where(context.FilterByPrimaryKeyPredicate<TEntity>(id));
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/a/42475617
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TPk"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="entity"></param>
+        /// <param name="entryId"></param>
+        public static void DetachLocal<TEntity, TPk>(this DbContext context, TEntity entity, string entryId)
+            where TEntity : class, IGenericEntityBase<TPk>
+            where TPk : struct
+        {
+            var local = context.Set<TEntity>()
+                            .Local
+                            .FirstOrDefault(entry => entry.Id.Equals(entryId));
+
+            if (local != null)
+                context.Entry(local).State = EntityState.Detached;
+
+            context.Entry(entity).State = EntityState.Modified;
+        }
     }
 
 }

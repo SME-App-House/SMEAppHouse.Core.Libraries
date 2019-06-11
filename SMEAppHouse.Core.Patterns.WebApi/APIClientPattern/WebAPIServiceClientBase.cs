@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SMEAppHouse.Core.Patterns.EF.ModelComposite;
+using SMEAppHouse.Core.Patterns.EF.ModelComposite.IntegerVariationModel;
 
 namespace SMEAppHouse.Core.Patterns.WebApi.APIClientPattern
 {

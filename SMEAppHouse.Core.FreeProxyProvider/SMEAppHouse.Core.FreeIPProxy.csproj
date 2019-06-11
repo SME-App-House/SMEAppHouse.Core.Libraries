@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Library for generating usable proxy IP usable when making http requests anonymously.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <Compile Remove="Providers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="Providers\**" />
+    <None Remove="Helpers\**" />
+    <None Remove="Providers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Rules.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Providers\Base\IIPProxyCartridge.cs" />
+    <Compile Include="Providers\Base\IPProxyCartridgeBase.cs" />
+    <Compile Include="Providers\PremProxyComCartridge.cs" />
+    <Compile Include="Providers\ProxyHttpNetCartridge.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SMEAppHouse.Core.CodeKits\SMEAppHouse.Core.CodeKits.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.HtmlUtil\SMEAppHouse.Core.ScraperBox.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.ProcessService\SMEAppHouse.Core.ProcessService.csproj" />
+    <ProjectReference Include="..\SMEAppHouse.Core.ScraperBox.Selenium\SMEAppHouse.Core.ScraperBox.Selenium.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>

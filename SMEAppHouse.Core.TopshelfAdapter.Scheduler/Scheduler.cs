@@ -25,7 +25,7 @@ namespace SMEAppHouse.Core.TopshelfAdapter.Scheduler
         }
 
         public Scheduler(Logger logger, Schedule[] schedules, Duration duration)
-            : base(logger)
+            : base((int)duration.TotalMilliseconds, logger)
         {
             Schedules = schedules;
             Duration = duration;

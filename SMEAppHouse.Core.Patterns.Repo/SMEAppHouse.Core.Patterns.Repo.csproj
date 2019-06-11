@@ -1,20 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Repository patterns library for implementing data strategies.</Description>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Library for implementing generic data composite modeling and repostitory pattern strategy.</Description>
   </PropertyGroup>
 
   <Import Project="..\.shared\common-dep-ass.proj" />
 
   <ItemGroup>
-    <Compile Remove="Base\IRepository.cs" />
-    <Compile Remove="Base\RepositoryBase~.cs" />
+    <Compile Remove="old\**" />
+    <Compile Remove="UnitOfWork\old\**" />
+    <EmbeddedResource Remove="old\**" />
+    <EmbeddedResource Remove="UnitOfWork\old\**" />
+    <None Remove="old\**" />
+    <None Remove="UnitOfWork\old\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="UnitOfWork\MockUnitOfWork.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,7 @@
 // ***********************************************************************
 
 using SMEAppHouse.Core.Patterns.EF.ModelComposite;
+using SMEAppHouse.Core.Patterns.EF.ModelComposite.IntegerVariationModel;
 using System.Collections.Generic;
 using System.Net.Http;
 

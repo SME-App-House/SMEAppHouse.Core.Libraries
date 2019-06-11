@@ -83,76 +83,41 @@ namespace SMEAppHouse.Core.CodeKits.Helpers.Expressions
         /// <returns></returns>
         public static MemberExpression GetMemberExpression(MemberExpression expression)
         {
-            try
-            {
-                if (expression != null)
-                    return (MemberExpression)expression.Expression;
-                else throw new InvalidOperationException($"{nameof(expression)} is null.");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            if (expression != null)
+                return (MemberExpression)expression.Expression;
+            else throw new InvalidOperationException($"{nameof(expression)} is null.");
         }
 
         public static MemberExpression GetMemberExpression(UnaryExpression expression)
         {
-            try
-            {
-                if (expression != null)
-                    return (MemberExpression)expression.Operand;
-                else throw new InvalidOperationException($"{nameof(expression)} is null.");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            if (expression != null)
+                return (MemberExpression)expression.Operand;
+            else throw new InvalidOperationException($"{nameof(expression)} is null.");
         }
 
         public static MemberExpression GetMemberExpression<T>(Expression<Func<T>> expression)
         {
-            try
-            {
-                if (expression.Body is MemberExpression)
-                    return (MemberExpression)expression.Body;
+            if (expression.Body is MemberExpression)
+                return (MemberExpression)expression.Body;
 
-                var op = ((UnaryExpression)expression.Body).Operand;
-                return (MemberExpression)op;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var op = ((UnaryExpression)expression.Body).Operand;
+            return (MemberExpression)op;
         }
         public static MemberExpression GetMemberExpression<TSource, TProperty>(Expression<Func<TSource, TProperty>> expression)
         {
-            try
-            {
-                if (expression.Body is MemberExpression)
-                    return (MemberExpression)expression.Body;
+            if (expression.Body is MemberExpression)
+                return (MemberExpression)expression.Body;
 
-                var op = ((UnaryExpression)expression.Body).Operand;
-                return (MemberExpression)op;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var op = ((UnaryExpression)expression.Body).Operand;
+            return (MemberExpression)op;
         }
 
         public static bool TypeHasProperty<TSource, TProperty>(Expression<Func<TSource, TProperty>> accessor)
         {
-            try
-            {
-                var memberExpr = GetMemberExpression(accessor);
-                var propertyName = memberExpr.Member.Name; //((MemberExpression)accessor.Body).Member.Name;
-                var properties = typeof(TSource).GetProperties();
-                return properties.Any(a => a.Name == propertyName);
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
+            var memberExpr = GetMemberExpression(accessor);
+            var propertyName = memberExpr.Member.Name; //((MemberExpression)accessor.Body).Member.Name;
+            var properties = typeof(TSource).GetProperties();
+            return properties.Any(a => a.Name == propertyName);
         }
 
         /// <summary>
@@ -175,15 +140,8 @@ namespace SMEAppHouse.Core.CodeKits.Helpers.Expressions
 
         public static string GetName<T>(Expression<Func<T>> expression)
         {
-            try
-            {
-                var memberExpr = GetMemberExpression(expression);
-                return memberExpr.Member.Name;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var memberExpr = GetMemberExpression(expression);
+            return memberExpr.Member.Name;
         }
 
         public static object GetPropertyValue<T>(Expression<Func<T>> expression)
@@ -200,29 +158,22 @@ namespace SMEAppHouse.Core.CodeKits.Helpers.Expressions
 
         public static object GetPropertyValue<T>(Expression<Func<T>> expression, ref Type returnedType, ref string propertyName)
         {
-            try
+            var member = (MemberExpression)expression.Body;
+            var value = expression.Compile()();
+
+            propertyName = member.Member.Name;
+
+            //get the returned type
+            if ((expression.Body.NodeType == ExpressionType.Convert)
+                || (expression.Body.NodeType == ExpressionType.ConvertChecked))
             {
-                var member = (MemberExpression)expression.Body;
-                var value = expression.Compile()();
-
-                propertyName = member.Member.Name;
-
-                //get the returned type
-                if ((expression.Body.NodeType == ExpressionType.Convert)
-                    || (expression.Body.NodeType == ExpressionType.ConvertChecked))
-                {
-                    var unary = expression.Body as UnaryExpression;
-                    if (unary != null)
-                        returnedType = unary.Operand.Type;
-                }
-                else returnedType = expression.Body.Type;
-
-                return value;
+                var unary = expression.Body as UnaryExpression;
+                if (unary != null)
+                    returnedType = unary.Operand.Type;
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            else returnedType = expression.Body.Type;
+
+            return value;
         }
 
         /// <summary>

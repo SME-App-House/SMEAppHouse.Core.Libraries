@@ -90,5 +90,39 @@ namespace SMEAppHouse.Core.CodeKits.Data
         {
             return DequeueItems<T>(queuedList, numberOfItems, (i) => true);
         }
+
+        /// <summary>
+        /// Use to dequeue from list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static T Pop<T>(this IList<T> list, int index=0) where T: class
+        {
+            var r = list[index];
+            list.RemoveAt(index);
+            return r;
+        }
+
+        /// <summary>
+        /// Sourced from: http://stackoverflow.com/questions/5118513/removeall-for-observablecollections
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="coll"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static int Remove<T>(this IList<T> coll, Func<T, bool> condition) where T : class
+        {
+            var itemsToRemove = coll.Where(condition).ToList();
+
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                coll.Remove(itemToRemove);
+            }
+
+            return itemsToRemove.Count;
+        }
+
     }
 }

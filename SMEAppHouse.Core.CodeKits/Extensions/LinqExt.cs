@@ -107,44 +107,30 @@ namespace SMEAppHouse.Core.CodeKits.Extensions
         /// <returns></returns>
         public static T GetObject<T>(this Dictionary<string, object> dict)
         {
-            try
-            {
-                var type = typeof(T);
-                var obj = Activator.CreateInstance(type);
+            var type = typeof(T);
+            var obj = Activator.CreateInstance(type);
 
-                foreach (var kv in dict)
+            foreach (var kv in dict)
+            {
+                object theVal = null;
+                var propInf = obj.GetPropertyInfo(kv.Key);
+
+                if (propInf.PropertyType.IsGenericType &&
+                    propInf.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) &&
+                    !string.IsNullOrEmpty(kv.Value.ToString()))
                 {
-                    try
-                    {
-                        object theVal = null;
-                        var propInf = obj.GetPropertyInfo(kv.Key);
-
-                        if (propInf.PropertyType.IsGenericType &&
-                            propInf.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) &&
-                            !string.IsNullOrEmpty(kv.Value.ToString()))
-                        {
-                            theVal = ReflectionsHelper.ChangeTypeEx(kv.Value, propInf.PropertyType.GetGenericArguments()[0]);
-                        }
-                        else
-                        {
-                            if (kv.Value != DBNull.Value)
-                                theVal = ReflectionsHelper.ChangeTypeEx(kv.Value, propInf.PropertyType);
-                        }
-
-                        // update the value of adlisting sourced from cellentry
-                        propInf.SetValue(obj, theVal, null);
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    theVal = ReflectionsHelper.ChangeTypeEx(kv.Value, propInf.PropertyType.GetGenericArguments()[0]);
                 }
-                return (T)obj;
+                else
+                {
+                    if (kv.Value != DBNull.Value)
+                        theVal = ReflectionsHelper.ChangeTypeEx(kv.Value, propInf.PropertyType);
+                }
+
+                // update the value of adlisting sourced from cellentry
+                propInf.SetValue(obj, theVal, null);
             }
-            catch (Exception exception)
-            {
-                throw;
-            }
+            return (T)obj;
         }
 
         ///<summary>Finds the index of the first item matching an expression in an enumerable.</summary>

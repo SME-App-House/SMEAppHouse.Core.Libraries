@@ -78,8 +78,8 @@ namespace SMEAppHouse.Core.ProcessService.Specials
             Task<T> previousTask = null; // pending instance
             CancellationTokenSource previousCts = null; // pending instance CTS
 
-            CancellationTokenSource thisCts = CancellationTokenSource.CreateLinkedTokenSource(token);
-            TaskCompletionSource<T> thisTcs = new TaskCompletionSource<T>(); // this task
+            var thisCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+            var thisTcs = new TaskCompletionSource<T>(); // this task
             CancellationToken thisToken; // this task's cancellation Token
             Task<T> routineTask = null; // as returned by routine
 

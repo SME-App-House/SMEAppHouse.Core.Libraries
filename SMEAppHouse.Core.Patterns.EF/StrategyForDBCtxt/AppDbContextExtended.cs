@@ -7,13 +7,13 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForDBCtxt
 {
     /// <inheritdoc />
     /// <summary>
-    /// https://blog.oneunicorn.com/2016/10/24/ef-core-1-1-creating-dbcontext-instances/
+    /// 
     /// </summary>
-    public class AppDbContextExtended<T> : DbContext
-        where T : DbContext, new()
+    public class AppDbContextExtended<TDbContext> : DbContext
+        where TDbContext : DbContext, new()
     {
 
-        public DbContextOptions<T> DbContextOptions { get; set; }
+        public DbContextOptions<TDbContext> DbContextOptions { get; set; }
 
         #region constructor
 
@@ -26,7 +26,7 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForDBCtxt
 
         }
 
-        public AppDbContextExtended(DbContextOptions<T> options)
+        public AppDbContextExtended(DbContextOptions<TDbContext> options)
             : base(options)
         {
             this.DbContextOptions = options;
@@ -34,34 +34,34 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForDBCtxt
 
         #endregion
 
-        public static DbContextOptions<T> GetOptions(string connectionString)
-        {
-            return new DbContextOptionsBuilder<T>()
-                        .UseSqlServer(connectionString)
-                        .Options;
-        }
-        public static DbContextOptions<T> GetOptions(string connectionString, string migrationTblName, string dbSchema)
-        {
-            return new DbContextOptionsBuilder<T>()
-                .UseSqlServer(connectionString, builder =>
-                    {
-                        builder.MigrationsHistoryTable(migrationTblName, dbSchema);
-                    })
-                .Options;
-        }
-
         /// <summary>
-        /// 
+        /// https://blog.oneunicorn.com/2016/10/24/ef-core-1-1-creating-dbcontext-instances/
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="migrationTblName"></param>
         /// <param name="dbSchema"></param>
         /// <returns></returns>
-        public T CreateDbContext(string connectionString, string migrationTblName, string dbSchema)
+        public static TDbContext CreateDbContext(string connectionString, string migrationTblName, string dbSchema)
         {
             var dbCntxOpt = GetOptions(connectionString, migrationTblName, dbSchema);
-            return (T)(DbContext)new AppDbContextExtended<T>(dbCntxOpt);
+            return (TDbContext)(DbContext)new AppDbContextExtended<TDbContext>(dbCntxOpt);
         }
+        public static DbContextOptions<TDbContext> GetOptions(string connectionString)
+        {
+            return new DbContextOptionsBuilder<TDbContext>()
+                    .UseSqlServer(connectionString)
+                    .Options;
+        }
+        public static DbContextOptions<TDbContext> GetOptions(string connectionString, string migrationTblName, string dbSchema)
+        {
+            return new DbContextOptionsBuilder<TDbContext>()
+                    .UseSqlServer(connectionString, builder =>
+                    {
+                        builder.MigrationsHistoryTable(migrationTblName, dbSchema);
+                    })
+                    .Options;
+        }
+        
 
         /// <summary>
         /// 
@@ -81,6 +81,10 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForDBCtxt
             return base.SaveChanges();
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+        }
     }
 
     

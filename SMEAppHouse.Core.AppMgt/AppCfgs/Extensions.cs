@@ -25,6 +25,7 @@ namespace SMEAppHouse.Core.AppMgt.AppCfgs
         /// <typeparam name="T"></typeparam>
         /// <param name="configuration"></param>
         /// <param name="sectionName"></param>
+        /// <returns></returns>
         public static T GetAppConfig<T>(this IConfiguration configuration, string sectionName) where T : class
         {
             var settingsSection = configuration.GetSection(sectionName);

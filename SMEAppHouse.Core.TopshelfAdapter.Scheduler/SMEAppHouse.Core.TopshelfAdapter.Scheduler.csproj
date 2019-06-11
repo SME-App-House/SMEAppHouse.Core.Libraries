@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
     <Description>Library to handle Topshelf implemented queued service modules.</Description>
   </PropertyGroup>
 
   <Import Project="..\.shared\common-dep-ass.proj" />
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="NodaTime" Version="2.4.2" />
+    <PackageReference Include="NLog" Version="4.6.3" />
+    <PackageReference Include="NodaTime" Version="2.4.5" />
   </ItemGroup>
 
   <ItemGroup>

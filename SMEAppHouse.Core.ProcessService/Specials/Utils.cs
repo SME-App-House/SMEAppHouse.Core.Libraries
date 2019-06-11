@@ -13,48 +13,41 @@ namespace SMEAppHouse.Core.ProcessService.Specials
         /// <param name="actions"></param>
         public static void SpawnAndWait(IEnumerable<Action> actions)
         {
-            try
+            var enumerable = actions as Action[] ?? actions.ToArray();
+            var list = enumerable.ToList();
+            var handles = new ManualResetEvent[enumerable.Count()];
+            for (var i = 0; i < list.Count; i++)
             {
-                var enumerable = actions as Action[] ?? actions.ToArray();
-                var list = enumerable.ToList();
-                var handles = new ManualResetEvent[enumerable.Count()];
-                for (var i = 0; i < list.Count; i++)
+                handles[i] = new ManualResetEvent(false);
+                var currentAction = list[i];
+                var currentHandle = handles[i];
+
+                void WrappedAction()
                 {
-                    handles[i] = new ManualResetEvent(false);
-                    var currentAction = list[i];
-                    var currentHandle = handles[i];
-                    Action wrappedAction = () =>
+                    try
                     {
-                        try
-                        {
-                            currentAction();
-                        }
-                        catch (AggregateException aEx)
-                        {
-                            throw aEx;
-                        }
-                        finally
-                        {
-                            currentHandle.Set();
-                        }
-                    };
-                    ThreadPool.QueueUserWorkItem(x => wrappedAction());
+                        currentAction();
+                    }
+                    catch (AggregateException aEx)
+                    {
+                        throw aEx;
+                    }
+                    finally
+                    {
+                        currentHandle.Set();
+                    }
                 }
 
-                WaitHandle.WaitAll(handles);
-
-                handles.ToList().ForEach(h =>
-                {
-                    h.Close();
-                    h.Dispose();
-                });
-
+                ThreadPool.QueueUserWorkItem(x => WrappedAction());
             }
-            catch (Exception ex)
+
+            WaitHandle.WaitAll(handles);
+
+            handles.ToList().ForEach(h =>
             {
-                throw;
-            }
-
+                h.Close();
+                h.Dispose();
+            });
         }
 
         /// <summary>

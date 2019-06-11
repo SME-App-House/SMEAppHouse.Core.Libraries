@@ -231,51 +231,36 @@ namespace SMEAppHouse.Core.CodeKits.Helpers
 
         public static List<JToken> GetAllTokens(this JToken token)
         {
-            try
-            {
-                IEnumerable<JToken> tokens = new List<JToken>();
+            IEnumerable<JToken> tokens = new List<JToken>();
 
-                if (!token.HasValues)
-                    return new List<JToken>() { token.Parent };
+            if (!token.HasValues)
+                return new List<JToken>() { token.Parent };
 
-                var children = token.Children();
-                foreach (var jToken in children)
-                {
-                    var cTokens = jToken.GetAllTokens();
-                    if (cTokens != null && cTokens.Any())
-                        tokens = tokens.Concat(cTokens);
-                }
-                return tokens.ToList();
-            }
-            catch (Exception ex)
+            var children = token.Children();
+            foreach (var jToken in children)
             {
-                throw;
+                var cTokens = jToken.GetAllTokens();
+                if (cTokens != null && cTokens.Any())
+                    tokens = tokens.Concat(cTokens);
             }
+            return tokens.ToList();
         }
 
         public static List<JToken> GetAllObjects(this JToken token)
         {
-            try
+            IEnumerable<JToken> tokens = new List<JToken>();
+
+            if (!token.HasValues)
+                return new List<JToken>() { token.Parent };
+
+            var children = token.Children();
+            foreach (var jToken in children)
             {
-                IEnumerable<JToken> tokens = new List<JToken>();
-
-                if (!token.HasValues)
-                    return new List<JToken>() { token.Parent };
-
-                var children = token.Children();
-                foreach (var jToken in children)
-                {
-                    var cTokens = jToken.GetAllTokens();
-                    if (cTokens != null && cTokens.Any())
-                        tokens = tokens.Concat(cTokens);
-                }
-                return tokens.ToList();
+                var cTokens = jToken.GetAllTokens();
+                if (cTokens != null && cTokens.Any())
+                    tokens = tokens.Concat(cTokens);
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
+            return tokens.ToList();
         }
 
         public static T GetValue<T>(this JToken jToken, string key, T defaultValue = default(T))

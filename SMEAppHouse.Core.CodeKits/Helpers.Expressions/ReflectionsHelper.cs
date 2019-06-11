@@ -152,22 +152,15 @@ namespace SMEAppHouse.Core.CodeKits.Helpers.Expressions
 
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            try
-            {
-                var result = (from p in properties
-                              let isCollection = IsOfCollectionType(p)
-                              let isCollection2 = IsPropertyOfCollectionType(p)
-                              where !isCollection && !isCollection2
-                                 && (fieldExemptions == null || (!fieldExemptions.Contains(p.Name)))
-                              select p)
-                              .ToDictionary(p => p.Name, p => p.GetValue(obj, null));
+            var result = (from p in properties
+                    let isCollection = IsOfCollectionType(p)
+                    let isCollection2 = IsPropertyOfCollectionType(p)
+                    where !isCollection && !isCollection2
+                                        && (fieldExemptions == null || (!fieldExemptions.Contains(p.Name)))
+                    select p)
+                .ToDictionary(p => p.Name, p => p.GetValue(obj, null));
 
-                return result;
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
+            return result;
         }
 
         public static string GetTypeName<T>(T item) where T : class

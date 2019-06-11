@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
     <Description>Library for handling Topshelf implemented windows service.</Description>
   </PropertyGroup>
 
   <Import Project="..\.shared\common-dep-ass.proj" />
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog" Version="4.6.3" />
     <PackageReference Include="Quartz" Version="3.0.7" />
   </ItemGroup>
 

@@ -19,7 +19,7 @@ namespace SMEAppHouse.Core.TopshelfAdapter
         private readonly AutoResetEvent _stopEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _waitEvent = new AutoResetEvent(false);
 
-        private readonly int _pauseBetween;
+        private readonly int _milliSecsDelay;
         private readonly bool _isBackground;
 
         #endregion
@@ -46,46 +46,59 @@ namespace SMEAppHouse.Core.TopshelfAdapter
 
         #region constructors
 
-        protected TopshelfSocketBase() :
-            this(null)
+        protected TopshelfSocketBase()
+            : this(1)
         {
         }
 
-        protected TopshelfSocketBase(Logger logger) : this(logger, 1000, false)
+        protected TopshelfSocketBase(TimeSpan pauseDelay)
+            : this((int)pauseDelay.TotalMilliseconds, null)
         {
         }
 
-        protected TopshelfSocketBase(Logger logger, TimeSpan pauseBetween, bool isBackground = false) :
-            this(logger, pauseBetween.Seconds, isBackground)
+        protected TopshelfSocketBase(TimeSpan pauseDelay, Logger logger)
+            : this((int)pauseDelay.TotalMilliseconds, logger, false)
         {
         }
 
-        protected TopshelfSocketBase(Logger logger, TimeSpan pauseBetween, bool isBackground = false, bool lazyInitialization = false) :
-            this(logger, pauseBetween.Seconds, isBackground, lazyInitialization)
+        protected TopshelfSocketBase(TimeSpan pauseDelay, Logger logger, bool isBackground)
+            : this((int)pauseDelay.TotalMilliseconds, logger, isBackground, false)
         {
         }
 
-        protected TopshelfSocketBase(Logger logger, int pauseBetween = 1000, bool isBackground = false, bool lazyInitialization = false)
+        protected TopshelfSocketBase(TimeSpan pauseDelay, Logger logger, bool isBackground, bool lazyInitialization)
+            : this((int)pauseDelay.TotalMilliseconds, logger, isBackground, lazyInitialization)
         {
-            try
-            {
-                Logger = logger;
-                _pauseBetween = pauseBetween;
-                _isBackground = isBackground;
-                _lazyInitialization = lazyInitialization;
+        }
 
-                InitializeConsoleTicker();
+        protected TopshelfSocketBase(int milliSecsDelay)
+            : this(1, null)
+        {
+        }
 
-                if (!_lazyInitialization)
-                    TryInitialize();
+        protected TopshelfSocketBase(int milliSecsDelay, Logger logger)
+            : this(milliSecsDelay, logger, false)
+        {
+        }
 
-                ServiceThread.Start();
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
+        protected TopshelfSocketBase(int milliSecsDelay, Logger logger, bool isBackground)
+            : this(milliSecsDelay, logger, isBackground, false)
+        {
+        }
 
+        protected TopshelfSocketBase(int milliSecsDelay, Logger logger, bool isBackground, bool lazyInitialization)
+        {
+            Logger = logger;
+            _milliSecsDelay = milliSecsDelay;
+            _isBackground = isBackground;
+            _lazyInitialization = lazyInitialization;
+
+            InitializeConsoleTicker();
+
+            if (!_lazyInitialization)
+                TryInitialize();
+
+            ServiceThread.Start();
         }
 
         #endregion
@@ -135,7 +148,7 @@ namespace SMEAppHouse.Core.TopshelfAdapter
 
         public void NLog(string data)
         {
-            NLog(data, true);
+            NLog(data, false);
         }
 
         public void NLog(string data, bool includeWriteToConsole)
@@ -145,7 +158,7 @@ namespace SMEAppHouse.Core.TopshelfAdapter
 
         public void NLog(NLogLevelEnum nLogLevel, string data)
         {
-            NLog(nLogLevel, data, true);
+            NLog(nLogLevel, data, false);
         }
 
         public void NLog(NLogLevelEnum nLogLevel, string data, bool includeWriteToConsole)
@@ -186,20 +199,13 @@ namespace SMEAppHouse.Core.TopshelfAdapter
         /// </summary>
         private void TryInitialize()
         {
-            try
-            {
-                if (InitializationStatus == InitializationStatusEnum.Initialized | InitializationStatus == InitializationStatusEnum.Initializing) return;
+            if (InitializationStatus == InitializationStatusEnum.Initialized | InitializationStatus == InitializationStatusEnum.Initializing) return;
 
-                InitializationStatus = InitializationStatusEnum.Initializing;
-                ServiceInitializeCallback();
-                InitializationStatus = InitializationStatusEnum.Initialized;
+            InitializationStatus = InitializationStatusEnum.Initializing;
+            ServiceInitializeCallback();
+            InitializationStatus = InitializationStatusEnum.Initialized;
 
-                (new ServiceInitializedEventArgs()).InvokeEvent(this, OnServiceInitialized);
-            }
-            catch (Exception exception)
-            {
-                throw;
-            }
+            (new ServiceInitializedEventArgs()).InvokeEvent(this, OnServiceInitialized);
         }
 
         /// <summary>
@@ -223,27 +229,27 @@ namespace SMEAppHouse.Core.TopshelfAdapter
             {
                 OnCompletionEvent = () => Console.WriteLine(@"Press ENTER to exit!"),
                 OnTickEvent = () =>
+                {
+                    ctr++;
+                    switch (ctr % 4)
                     {
-                        ctr++;
-                        if (ctr % 4 == 0)
-                        {
+                        case 0:
                             Console.Write("\r/");
                             ctr = 0;
-                        }
-                        else if (ctr % 4 == 1)
-                        {
+                            break;
+                        case 1:
                             Console.Write("\r-");
-                        }
-                        else if (ctr % 4 == 2)
-                        {
+                            break;
+                        case 2:
                             Console.Write("\r\\");
-                        }
-                        else if (ctr % 4 == 3)
-                        {
+                            break;
+                        case 3:
                             Console.Write("\r|");
-                        }
-                        //Console.Write(@"."
+                            break;
                     }
+
+                    //Console.Write(@"."
+                }
             };
         }
 
@@ -258,26 +264,20 @@ namespace SMEAppHouse.Core.TopshelfAdapter
         {
             lock (_mutex)
             {
+                Thread.Sleep(5000);
                 do
                 {
-                    try
-                    {
-                        if (InitializationStatus != InitializationStatusEnum.Initialized)
-                            continue;
+                    if (InitializationStatus != InitializationStatusEnum.Initialized)
+                        continue;
 
-                        ServiceActionCallback();
+                    ServiceActionCallback();
 
-                        if (_pauseEvent.WaitOne(_pauseBetween))
-                        {
-                            _waitEvent.Set();
-                            _resumeEvent.WaitOne(Timeout.Infinite);
-                        }
-                        Thread.Sleep(10);
-                    }
-                    catch (Exception exception)
+                    if (_pauseEvent.WaitOne(_milliSecsDelay))
                     {
-                        throw;
+                        _waitEvent.Set();
+                        _resumeEvent.WaitOne(Timeout.Infinite);
                     }
+                    Thread.Sleep(1);
                 } while (!_stopEvent.WaitOne(0));
             }
         }

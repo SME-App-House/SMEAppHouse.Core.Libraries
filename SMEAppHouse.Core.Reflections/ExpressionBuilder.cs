@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace SMAppHouse.Core.Reflections
+namespace SMEAppHouse.Core.Reflections
 {
     /// <summary>
     /// https://gist.github.com/afreeland/6733381

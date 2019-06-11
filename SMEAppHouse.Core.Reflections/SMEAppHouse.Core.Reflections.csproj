@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Library of useful reusable functions and procedures extending EF based on patters.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="DynamicLibrary.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+</Project>

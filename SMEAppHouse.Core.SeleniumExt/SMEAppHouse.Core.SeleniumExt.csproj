@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Description>Library for setting app configurations.</Description>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Library for handling Selenium functionalities.</Description>
   </PropertyGroup>
 
   <Import Project="..\.shared\common-dep-ass.proj" />

@@ -61,11 +61,11 @@ namespace SMEAppHouse.Core.ProcessService.Specials
 
         private void OnItemComplete(object state, Exception exception)
         {
-            EventHandler<ParallelEventArgs> itemHandler = _itemComplete; // don't need to lock
+            var itemHandler = _itemComplete; // don't need to lock
             if (itemHandler != null) itemHandler(this, new ParallelEventArgs(state, exception));
             if (Interlocked.Decrement(ref _running) == 0)
             {
-                EventHandler allHandler = _allComplete; // don't need to lock
+                var allHandler = _allComplete; // don't need to lock
                 if (allHandler != null) allHandler(this, EventArgs.Empty);
                 lock (_joinLock)
                 {

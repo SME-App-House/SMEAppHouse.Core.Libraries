@@ -109,31 +109,23 @@ namespace SMEAppHouse.Core.CodeKits.Helpers
         /// <returns></returns>
         public static string[] ReadFromFileEachLine(string textFile)
         {
-            try
+            List<string> result = null;
+            var _line = string.Empty;
+            var file = new StreamReader(textFile);
+
+            while ((_line = file.ReadLine()) != null)
             {
-                List<string> result = null;
-                var _line = string.Empty;
-                var file = new StreamReader(textFile);
-
-                while ((_line = file.ReadLine()) != null)
-                {
-                    if (result == null)
-                        result = new List<string>();
-                    result.Add(_line);
-                }
-
-                file.Close();
-
-                if (result != null && result.Count > 0)
-                    return result.ToArray();
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw;
+                if (result == null)
+                    result = new List<string>();
+                result.Add(_line);
             }
 
+            file.Close();
+
+            if (result != null && result.Count > 0)
+                return result.ToArray();
+
+            return null;
         }
 
         /// <summary>

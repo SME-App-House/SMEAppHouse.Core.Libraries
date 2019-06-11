@@ -1,77 +1,60 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SMEAppHouse.Core.Patterns.EF.ModelComposite;
-using SMEAppHouse.Core.Patterns.Repo.Base;
+using SMEAppHouse.Core.Patterns.Repo.Repository;
 
 namespace SMEAppHouse.Core.Patterns.Repo.UnitOfWork
 {
-    public class UnitOfWorkBase<TContext> : IUnitOfWork
-        where TContext : DbContext, new()
+    public class UnitOfWorkBase<TDbContext, TPk> : IGenericUnitOfWork<TDbContext, TPk>
+        where TDbContext : DbContext, IDisposable
+        where TPk:struct
     {
-        private readonly TContext _context;
+        public TDbContext DbContext { get; }
+
         private readonly Dictionary<Type, object> _repositories;
         private bool _disposed;
 
-        #region constructor
-        public UnitOfWorkBase()
-            : this(null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbContext"></param>
+        public UnitOfWorkBase(TDbContext dbContext)
         {
-        }
-
-        // Default constructor that news the context and the dictionary containing all the repositories
-        public UnitOfWorkBase(TContext context)
-        {
-            _context = context ?? new TContext();
+            DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _repositories = new Dictionary<Type, object>();
             _disposed = false;
         }
 
-        #endregion
-
         /// <summary>
-        /// Retrieves the repository for some Model class T
-        /// If it doesn't exist, we create an instance of it
+        /// 
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
-        /// <typeparam name="TPk"></typeparam>
         /// <returns></returns>
-        public IRepositorySync<TEntity, TPk> GetRepository<TEntity, TPk>()
-            where TEntity : class, IIdentifiableEntity<TPk>
-            where TPk : struct
+        public IRepository<TEntity, TPk> GetRepository<TEntity>() where TEntity : class, IGenericEntityBase<TPk>
         {
-            // Checks if the Dictionary Key contains the Model class
-            if (_repositories.Keys.Contains(typeof(TEntity)))
-            {
-                // Return the repository for that Model class
-                return _repositories[typeof(TEntity)] as IRepositorySync<TEntity, TPk>;
-            }
+            var type = typeof(TEntity);
 
-            // If the repository for that Model class doesn't exist, then create it
-            var repository = new RepositoryBaseSync<TEntity, TPk, TContext>(_context);
+            if (!_repositories.ContainsKey(type))
+                _repositories[type] = new RepositoryBase<TEntity, TPk>(DbContext);
 
-            // Add it to the dictionary
-            _repositories.Add(typeof(TEntity), repository);
-
-            // Return it
-            return repository;
+            return (IRepository<TEntity, TPk>)_repositories[type];
         }
 
         /// <summary>
-        /// Saves all changes done to the context
+        /// 
         /// </summary>
-        public void Save()
+        /// <returns></returns>
+        public int SaveChanges()
         {
-            _context.SaveChanges(); //.SubmitChanges();
+            return DbContext.SaveChanges();
         }
 
-        /// <summary>
-        /// Disposes the context
-        /// </summary>
+        #region Disposals
+
         public void Dispose()
         {
-            Dispose(true);
+            DbContext?.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -82,9 +65,11 @@ namespace SMEAppHouse.Core.Patterns.Repo.UnitOfWork
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
-            if (disposing) _context.Dispose();
+            if (disposing) DbContext?.Dispose();
             _disposed = true;
         }
+
+        #endregion
 
     }
 }

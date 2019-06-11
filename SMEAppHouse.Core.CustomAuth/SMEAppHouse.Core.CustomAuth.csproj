@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Patterns Library: For implementing entity structural and adapter pattern.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="StrategyForDBCtxt\**" />
+    <EmbeddedResource Remove="StrategyForDBCtxt\**" />
+    <None Remove="StrategyForDBCtxt\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>

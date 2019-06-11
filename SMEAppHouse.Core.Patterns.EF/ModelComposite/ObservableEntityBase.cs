@@ -13,13 +13,13 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
     /// Why Datetime2? &gt; https://stackoverflow.com/a/1884088
     /// </summary>
     /// <typeparam name="TPk"></typeparam>
-    public class ObservableEntityBase<TPk> : IIdentifiableEntity<TPk>, INotifyPropertyChanged
+    public class ObservableEntityBase<TPk> : IGenericEntityBase<TPk>, INotifyPropertyChanged
     {
         private TPk _id;
         private int? _ordinal;
         private DateTime? _dateCreated = DateTime.UtcNow;
         private DateTime? _dateRevised = DateTime.UtcNow;
-        private bool _isActive = true;
+        private bool _isNotActive = false;
 
         #region constructors
 
@@ -27,7 +27,7 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
         {
             Id = default(TPk);
             Ordinal = 0;
-            IsActive = true;
+            IsNotActive = false;
             DateCreated = DateTime.UtcNow;
             DateRevised = DateTime.UtcNow;
         }
@@ -73,8 +73,6 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
             }
         }
 
-
-
         /// <summary>
         /// Date this record was created
         /// https://stackoverflow.com/a/1884088
@@ -101,16 +99,17 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
         }
 
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 502)]
-        public Guid? CreatedBy { get; set; }
+        [DataType(DataType.Text)]
+        [StringLength(32)]
+        public string CreatedBy { get; set; }
 
         /// <summary>
         /// Date this record was modified
         /// </summary>
         //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm tt}", ApplyFormatInEditMode = true)]
         [Column(Order = 503, TypeName = "DateTime2")]
-        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? DateRevised
         {
@@ -128,22 +127,24 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
             }
         }
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 504)]
-        public Guid? RevisedBy { get; set; }
+        [DataType(DataType.Text)]
+        [StringLength(32)]
+        public string RevisedBy { get; set; }
 
         /// <summary>
         /// Used to indicate the model is active and can be used by the service operations.
         /// </summary>
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 505)]
-        public bool? IsActive
+        public bool? IsNotActive
         {
-            get => _isActive;
+            get => _isNotActive;
             set
             {
-                if (value == null || value.Equals(_isActive)) return;
-                _isActive = value.Value;
+                if (value == null || value.Equals(_isNotActive)) return;
+                _isNotActive = value.Value;
                 OnPropertyChanged();
             }
         }
@@ -156,7 +157,7 @@ namespace SMEAppHouse.Core.Patterns.EF.ModelComposite
 
         public static IEnumerable<Type> GetImplementors()
         {
-            var type = typeof(IIdentifiableEntity<TPk>);
+            var type = typeof(IGenericEntityBase<TPk>);
             var types = AppDomain.CurrentDomain.GetAssemblies().ToList().SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p));
             return types;

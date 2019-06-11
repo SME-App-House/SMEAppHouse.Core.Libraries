@@ -72,10 +72,6 @@ namespace SMEAppHouse.Core.CodeKits.Tools
                 var errMsg = $"Unable to serialize {value}";
                 throw new Exception(errMsg, sX);
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
         }
 
         /// <summary>

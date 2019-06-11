@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
     <Description>Container of common members shared across Topshelf adapter implementation.</Description>
   </PropertyGroup>
 
@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="NodaTime" Version="2.4.2" />
+    <PackageReference Include="NLog" Version="4.6.3" />
+    <PackageReference Include="NodaTime" Version="2.4.5" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <Description>Library for handling Selenium functionalities.</Description>
+  </PropertyGroup>
+
+  <Import Project="..\.shared\common-dep-ass.proj" />
+
+  <ItemGroup>
+    <Compile Remove="Helper_old.cs" />
+    <Compile Remove="Rules.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PhantomJS" Version="2.1.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.13.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SMEAppHouse.Core.HtmlUtil\SMEAppHouse.Core.ScraperBox.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="phantomjs.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

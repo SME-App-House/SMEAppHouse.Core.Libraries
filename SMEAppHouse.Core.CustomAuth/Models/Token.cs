@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SMAppHouse.Core.CustomAuth.Models
+namespace SMEAppHouse.Core.CustomAuth.Models
 {
     public class Token
     {

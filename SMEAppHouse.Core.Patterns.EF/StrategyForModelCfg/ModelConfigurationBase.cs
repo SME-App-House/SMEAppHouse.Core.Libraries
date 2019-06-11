@@ -23,17 +23,8 @@ PRINT @SqlStatement
 
 namespace SMEAppHouse.Core.Patterns.EF.StrategyForModelCfg
 {
-
-    public interface IModelConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
-        where TEntity : class, IEntity
-    {
-        string Schema { get; }
-        Expression<Func<TEntity, object>>[] FieldsToIgnore { get; set; }
-        void Map(EntityTypeBuilder<TEntity> entityBuilder);
-    }
-
     public abstract class ModelConfigurationBase<TEntity, TPk> : IModelConfiguration<TEntity>
-        where TEntity : class, IIdentifiableEntity<TPk>
+        where TEntity : class, IGenericEntityBase<TPk>
         where TPk : struct
     {
         private readonly string _altTableName;
@@ -170,10 +161,11 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForModelCfg
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TPk"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="entityBuilder"></param>
         /// <param name="conventionFieldsToIgnore"></param>
         private static void SetupConventions<T>(EntityTypeBuilder<TEntity> entityBuilder, Expression<Func<TEntity, object>>[] conventionFieldsToIgnore)
-            where T : class, IIdentifiableEntity<TPk>
+            where T : class, IGenericEntityBase<TPk>
         {
             if (conventionFieldsToIgnore != null && conventionFieldsToIgnore.Any())
             {
@@ -186,16 +178,19 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForModelCfg
             var fieldsIgnoreList = conventionFieldsToIgnore.ToListOfFields();
             // add the rest not ignored
             entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.Ordinal)?
-                .HasColumnName("ordinal").HasDefaultValue(0);
+                .HasColumnName("ordinal").HasDefaultValue(0).IsRequired(false);
 
-            entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.IsActive)?
-                .HasColumnName("isActive").HasDefaultValue(true); 
+            // UsePropertyAccessMode(PropertyAccessMode.Property) :: https://stackoverflow.com/a/50776738/3796898
+            // fix to error related to "Expression of type 'System.Nullable`1[System.Boolean]' cannot be used for assignment to type 'System.Boolean'"
+            entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.IsNotActive)?
+                .HasColumnName("IsNotActive").HasDefaultValue(false).IsRequired(false)
+                .UsePropertyAccessMode(PropertyAccessMode.Property);
 
             entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.DateCreated)?
-                .HasColumnName("dateCreated").HasDefaultValue(DateTime.Now);
+                .HasColumnName("dateCreated").HasDefaultValue(DateTime.Now).IsRequired(true);
 
             entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.DateRevised)?
-                .HasColumnName("dateRevised");
+                .HasColumnName("dateRevised").IsRequired(false);
 
             entityBuilder.RegisterConventionalField<TEntity>(fieldsIgnoreList, entity => entity.CreatedBy)?
                 .HasColumnName("createdBy").IsRequired(false);
@@ -212,20 +207,20 @@ namespace SMEAppHouse.Core.Patterns.EF.StrategyForModelCfg
             this EntityTypeBuilder<TEntity> entityBuilder
             , IList<string> fieldsIgnoreList
             , Expression<Func<TEntity, object>> selector)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
             var fNm = GetFieldNameFromSelector(selector);
             return fieldsIgnoreList != null && fieldsIgnoreList.Contains(fNm) ? null : entityBuilder.Property(selector);
         }
 
-        // <summary>
+        /// <summary>
         /// https://stackoverflow.com/a/12420603
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="fieldSelector"></param>
         /// <returns></returns>
         internal static string GetFieldNameFromSelector<TEntity>(Expression<Func<TEntity, object>> fieldSelector)
-            where TEntity : class, IEntity
+            where TEntity : class, IEntityBase
         {
             if (fieldSelector.Body is MemberExpression expression)
                 return expression.Member.Name;

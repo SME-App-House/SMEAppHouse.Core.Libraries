@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -77,7 +79,7 @@ namespace SMEAppHouse.Core.CodeKits
                 }
                 else
                 {
-                    callback.EndInvoke(result);  // Needed to terminate thread?
+                    callback.EndInvoke(result); // Needed to terminate thread?
 
                     return false;
                 }
@@ -110,11 +112,18 @@ namespace SMEAppHouse.Core.CodeKits
             return random.Next(min, max);
         }
 
+        public static DateTime RandomDate(Random generator, DateTime rangeStart, DateTime rangeEnd)
+        {
+            var span = rangeEnd - rangeStart;
+            var randomMinutes = generator.Next(0, (int) span.TotalMinutes);
+            return rangeStart + TimeSpan.FromMinutes(randomMinutes);
+        }
+
         public static TimeSpan RandomTime(int startHour, int endHour)
         {
             var rand = new Random();
             var startTime = Convert.ToInt32(TimeSpan.FromHours(startHour).TotalMinutes);
-            var endTime = Convert.ToInt32(TimeSpan.FromHours(endHour).TotalMinutes) + 1;     // e.g. To make 11:00 inclusive
+            var endTime = Convert.ToInt32(TimeSpan.FromHours(endHour).TotalMinutes) + 1; // e.g. To make 11:00 inclusive
 
             var timeSpans = Enumerable.Range(1, 10000)
                 .Select(v => TimeSpan.FromMinutes(rand.Next(startTime, endTime)));
@@ -148,13 +157,14 @@ namespace SMEAppHouse.Core.CodeKits
         {
             // remove any characters that are not digits (like #)
             var isHexDigit
-               = new Regex("[abcdefABCDEF\\d]+", RegexOptions.Compiled);
+                = new Regex("[abcdefABCDEF\\d]+", RegexOptions.Compiled);
             var newnum = "";
             foreach (var c in input)
             {
                 if (isHexDigit.IsMatch(c.ToString()))
                     newnum += c.ToString();
             }
+
             return newnum;
         }
 
@@ -200,6 +210,7 @@ namespace SMEAppHouse.Core.CodeKits
                 if (killProc && !clsProcess.HasExited)
                     clsProcess.Kill();
             }
+
             return found;
         }
 
@@ -261,10 +272,11 @@ namespace SMEAppHouse.Core.CodeKits
         /// <param name="denominator"></param>
         /// <returns></returns>
         public static double Round(double x, int numerator, int denominator)
-        { // returns the number nearest x, with a precision of numerator/denominator
+        {
+            // returns the number nearest x, with a precision of numerator/denominator
             // example: Round(12.1436, 5, 100) will round x to 12.15 (precision = 5/100 = 0.05)
-            var y = (long)Math.Floor(x * denominator + (double)numerator / 2.0);
-            return (double)(y - y % numerator) / (double)denominator;
+            var y = (long) Math.Floor(x * denominator + (double) numerator / 2.0);
+            return (double) (y - y % numerator) / (double) denominator;
         }
 
         /// <summary>
@@ -288,14 +300,14 @@ namespace SMEAppHouse.Core.CodeKits
         /// </summary>
         /// <param name="amountOfTime"></param>
         /// <param name="timeGranule"></param>
-        public static void Delay2(double amountOfTime, Rules.TimeIntervalTypesEnum timeGranule = Rules.TimeIntervalTypesEnum.MilliSeconds)
+        public static void Delay2(double amountOfTime,
+            Rules.TimeIntervalTypesEnum timeGranule = Rules.TimeIntervalTypesEnum.MilliSeconds)
         {
             var dateSince = DateTime.Now;
             do
             {
                 Thread.Sleep(1);
-            }
-            while (DateTimeExt.CalculateElapsedTime(dateSince, DateTime.Now, timeGranule) < amountOfTime);
+            } while (DateTimeExt.CalculateElapsedTime(dateSince, DateTime.Now, timeGranule) < amountOfTime);
         }
 
         public static Task Delay3(int ms, Action doThis)
@@ -369,7 +381,7 @@ namespace SMEAppHouse.Core.CodeKits
         /// <returns></returns>
         public static T ConvertToGeneric<T>(object obj)
         {
-            return (T)Convert.ChangeType(obj, typeof(T));
+            return (T) Convert.ChangeType(obj, typeof(T));
         }
 
         public static bool IsValidEmail(string email)
@@ -392,7 +404,9 @@ namespace SMEAppHouse.Core.CodeKits
             //@"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)"
             //"http://([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?"
 
-            var regx = new Regex(@"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", RegexOptions.IgnoreCase);
+            var regx = new Regex(
+                @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)",
+                RegexOptions.IgnoreCase);
             var mactches = regx.Matches(text);
             foreach (Match match in mactches)
             {
@@ -401,6 +415,7 @@ namespace SMEAppHouse.Core.CodeKits
 
                 entries.Add(match.Value);
             }
+
             return entries;
         }
 
@@ -418,7 +433,17 @@ namespace SMEAppHouse.Core.CodeKits
                 handles[i] = new ManualResetEvent(false);
                 var currentAction = list[i];
                 var currentHandle = handles[i];
-                Action wrappedAction = () => { try { currentAction(); } finally { currentHandle.Set(); } };
+                Action wrappedAction = () =>
+                {
+                    try
+                    {
+                        currentAction();
+                    }
+                    finally
+                    {
+                        currentHandle.Set();
+                    }
+                };
                 ThreadPool.QueueUserWorkItem(x => wrappedAction());
             }
 
@@ -468,6 +493,88 @@ namespace SMEAppHouse.Core.CodeKits
         public static bool IsArrayOf<T>(this Type type)
         {
             return type == typeof(T[]);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="partialName"></param>
+        /// <returns></returns>
+        public static string GetMonthFromPartial(string partialName)
+        {
+            if (partialName == "Feb") return "February";
+            if (partialName == "Mar") return "March";
+            if (partialName == "Apr") return "April";
+            if (partialName == "May") return "May";
+            if (partialName == "Jun") return "June";
+            if (partialName == "Jul") return "July";
+            if (partialName == "Aug") return "August";
+            if (partialName == "Sep") return "Septembe";
+            if (partialName == "Oct") return "October";
+            if (partialName == "Nov") return "November";
+            if (partialName == "Dec") return "December";
+            if (partialName == "Jan") return "January";
+            else return "";
+        }
+
+        public static async Task ForEachWithDelay<T>(this ICollection<T> items, Func<T, Task> action, double interval)
+        {
+            using (var timer = new System.Timers.Timer(interval))
+            {
+                var task = new Task(() => { });
+                int remaining = items.Count;
+                var queue = new ConcurrentQueue<T>(items);
+
+                timer.Elapsed += async (sender, args) =>
+                {
+                    T item;
+                    if (queue.TryDequeue(out item))
+                    {
+                        try
+                        {
+                            await action(item);
+                        }
+                        finally
+                        {
+                            // Complete task.
+                            remaining -= 1;
+
+                            if (remaining == 0)
+                            {
+                                // No more items to process. Complete task.
+                                task.Start();
+                            }
+                        }
+                    }
+                };
+
+                timer.Start();
+
+                await task;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static KeyValuePair<string, object> KeyValOf(string key, object value)
+        {
+            return new KeyValuePair<string, object>(key, value);
+        }
+
+        /// <summary>
+        /// http://csharp.tips/tip/article/965-how-to-convert-guid-to-integer
+        /// Convert GUID to BigInteger
+        /// ex: 134252730720501571475137903438348973637
+        /// </summary>
+        /// <returns></returns>
+        public static BigInteger RandomBigInteger()
+        {
+            var g = Guid.NewGuid();
+            return new BigInteger(g.ToByteArray());
         }
 
     }
